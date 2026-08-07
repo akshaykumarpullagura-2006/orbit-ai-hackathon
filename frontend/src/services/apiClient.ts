@@ -4,6 +4,8 @@
  * Handles error mapping, response normalization, and typed returns.
  */
 
+import type { WorkflowRun, ResultRecord } from '@/types';
+
 const getApiBaseUrl = (): string => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
@@ -17,6 +19,7 @@ const getApiBaseUrl = (): string => {
 const API_BASE_URL = getApiBaseUrl();
 
 // ─── Upload ───────────────────────────────────────────────────────────────────
+
 
 export interface UploadApiResponse {
   runs: WorkflowRun[];

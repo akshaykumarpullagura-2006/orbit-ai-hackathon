@@ -96,7 +96,8 @@ export class AgentService {
         };
       }
       case 'router': {
-        const res = await runRouterAgent(fileName, 'Ingested');
+        const plannerRes = await runPlannerAgent(fileName, rawText);
+        const res = await runRouterAgent(plannerRes, fileName);
         return {
           output: res,
           logs: [
@@ -107,7 +108,9 @@ export class AgentService {
         };
       }
       case 'document': {
-        const res = await runAnalyzerAgent(fileName, rawText);
+        const plannerRes = await runPlannerAgent(fileName, rawText);
+        const routerRes = await runRouterAgent(plannerRes, fileName);
+        const res = await runAnalyzerAgent(fileName, rawText, routerRes);
         return {
           output: res,
           logs: [
@@ -118,8 +121,10 @@ export class AgentService {
         };
       }
       case 'decision': {
-        const docRes = await runAnalyzerAgent(fileName, rawText);
-        const res = await runDecisionAgent(docRes);
+        const plannerRes = await runPlannerAgent(fileName, rawText);
+        const routerRes = await runRouterAgent(plannerRes, fileName);
+        const docRes = await runAnalyzerAgent(fileName, rawText, routerRes);
+        const res = await runDecisionAgent(docRes, routerRes);
         return {
           output: res,
           logs: [
@@ -130,9 +135,11 @@ export class AgentService {
         };
       }
       case 'automation': {
-        const docRes = await runAnalyzerAgent(fileName, rawText);
-        const decRes = await runDecisionAgent(docRes);
-        const res = await runAutomationAgent(decRes);
+        const plannerRes = await runPlannerAgent(fileName, rawText);
+        const routerRes = await runRouterAgent(plannerRes, fileName);
+        const docRes = await runAnalyzerAgent(fileName, rawText, routerRes);
+        const decRes = await runDecisionAgent(docRes, routerRes);
+        const res = await runAutomationAgent(decRes, fileName);
         return {
           output: res,
           logs: [
@@ -157,9 +164,11 @@ export class AgentService {
         };
       }
       case 'report': {
-        const docRes = await runAnalyzerAgent(fileName, rawText);
-        const decRes = await runDecisionAgent(docRes);
-        const res = await runReporterAgent(fileName, docRes, decRes);
+        const plannerRes = await runPlannerAgent(fileName, rawText);
+        const routerRes = await runRouterAgent(plannerRes, fileName);
+        const docRes = await runAnalyzerAgent(fileName, rawText, routerRes);
+        const decRes = await runDecisionAgent(docRes, routerRes);
+        const res = await runReporterAgent(fileName, docRes, decRes, routerRes);
         return {
           output: res,
           logs: [
